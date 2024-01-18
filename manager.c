@@ -170,7 +170,7 @@ void get_from_file(field_t* dest_field, ant_t* dest_ant, char* filename) {
 
     char* input_buf;
     while ((input_buf = read_input(opener)) != NULL) {
-        printf("%04u: %s\n", ant_strlen(input_buf), input_buf);
+        // printf("%04u: %s\n", ant_strlen(input_buf), input_buf);
         ++new_m;
         if(new_n == 0) new_n = ant_strlen(input_buf);
         if((utemp = anttaker(input_buf).b) != -1) {
@@ -181,10 +181,6 @@ void get_from_file(field_t* dest_field, ant_t* dest_ant, char* filename) {
 
     dest_field->m = new_m;
     dest_field->n = new_n;
-
-    /*while( fgets(buffer, 3000, opener) != NULL ) {
-        printf("%zu: %s\n", strlen(buffer), buffer);
-    }*/
 
     fclose(opener);
 }

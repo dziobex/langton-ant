@@ -23,10 +23,9 @@ void random_obstacles(field_t* field, int pc) {
         int x = rand() % field->m;
         int y = rand() % field->n;
 
-        if ( field->field[x][y] == 0) // tu zmienić na porównywanie char* z char*
+        if ( field->field[x][y] == 0)
             field->field[x][y] = 1; // = "█";
         else
             ++blackies;
     }
-
 }

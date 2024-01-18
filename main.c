@@ -27,16 +27,6 @@ void help(char* fname) {
 int main( int argc, char** argv ) {
     srand(time(NULL));
 
-    // TODO:
-    // -funkcja getopt
-    // -dodać coś żeby móc wczytywać stan planszy z mruwą z pliku
-    // -obsługa błędów
-    // -readme
-    // -sprawozdanie
-    // -sprawdzić czy to działa na linuksie
-    // -dodać jakieś ładne wyświetlanie
-    //x -komenda help
-
     // m, n, i, name, dir
     // wiersze, kolumny, nr iteracji, nazwa pliku, kierunek
     // lub wczyt - tylko name
@@ -55,6 +45,8 @@ int main( int argc, char** argv ) {
     int m = 0, n = 0, p = 0, it_count = 1, d = 0;
     char* open_filename;
     char* save_filename;
+
+    // flagi
     int file_opened = 0, file_saved = 0;
 
     while ((c = getopt(argc, argv, "m:n:i:d:s:o:p:")) != -1) {
@@ -84,7 +76,7 @@ int main( int argc, char** argv ) {
                 save_filename = malloc(strlen(optarg));
                 memcpy(save_filename, optarg, strlen(optarg));
                 save_filename[strlen(optarg)] = '\0';
-                printf("zapisac w = %s\n", optarg);
+                printf("Zapisac w = %s\n", optarg);
                 break;
             }
             case 'o': {
@@ -93,7 +85,7 @@ int main( int argc, char** argv ) {
                 open_filename = malloc(strlen(optarg));
                 memcpy(open_filename, optarg, strlen(optarg));
                 open_filename[strlen(optarg)] = '\0';
-                printf("otworzyc z = %s\n", optarg);
+                printf("Otworzyc z = %s\n", optarg);
                 break;
             }
             case '?': {
@@ -106,6 +98,12 @@ int main( int argc, char** argv ) {
                 exit(EXIT_FAILURE);
             }
         }
+    }
+
+    // wywołanie komendy pomocy
+    if (argc == 1) {
+        help(argv[0]);
+        exit(EXIT_FAILURE);
     }
     
     // wykrywanie błędów (dla numeru iteracji)
@@ -165,11 +163,15 @@ int main( int argc, char** argv ) {
                 fprintf(out, "%s", pleasant_character(&field, &ant, i, j));
             fprintf(out, "\n");
         }
+        fprintf(out, "\n");
 
         move_ant(&ant, &field);
 
+        // nie zamykam buffra jeśli jest on na konsolę
         if (file_saved == 1)
             fclose(out);
+        else
+            free(out);
     }
 
     return EXIT_SUCCESS;
