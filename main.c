@@ -27,16 +27,6 @@ void help(char* fname) {
 int main( int argc, char** argv ) {
     srand(time(NULL));
 
-    // TODO:
-    // -funkcja getopt
-    // -dodać coś żeby móc wczytywać stan planszy z mruwą z pliku
-    // -obsługa błędów
-    // -readme
-    // -sprawozdanie
-    // -sprawdzić czy to działa na linuksie
-    // -dodać jakieś ładne wyświetlanie
-    //x -komenda help
-
     // m, n, i, name, dir
     // wiersze, kolumny, nr iteracji, nazwa pliku, kierunek
     // lub wczyt - tylko name
@@ -52,69 +42,50 @@ int main( int argc, char** argv ) {
     // o - open, plik skąd się wczyta plansze
     // s - save, plik wynikowy (1. człon nazwy)
 
-    int m = 50, n = 50, p = 50, it_count = 50, d = 0;
+    int m = 0, n = 0, p = 0, it_count = 1, d = 0;
     char* open_filename;
     char* save_filename;
+
+    // flagi
+    int file_opened = 0, file_saved = 0;
 
     while ((c = getopt(argc, argv, "m:n:i:d:s:o:p:")) != -1) {
         switch (c) {
             case 'm': {
                 m = atoi(optarg);
-                if ( m < 5 || m > 1000) {
-                    printf("Niepoprawna liczba kolumn (m): %i\n", m);
-                    help(argv[0]);
-                    exit(EXIT_FAILURE);
-                }
                 break;
             }
             case 'n': {
                 n = atoi(optarg);
-                if ( n < 5 || n > 1000) {
-                    printf("Niepoprawna liczba wierszy (n): %i\n", n);
-                    help(argv[0]);
-                    exit(EXIT_FAILURE);
-                }
                 break;
             }
             case 'i': {
                 it_count = atoi(optarg);
-                if ( it_count < 1 || it_count > 2000) {
-                    printf("Niepoprawna liczba iteracji (i): %i\n", it_count);
-                    help(argv[0]);
-                    exit(EXIT_FAILURE);
-                }
                 break;
             }
             case 'p': {
                 p = atoi(optarg);
-                if ( p < 0 || p > 100) {
-                    printf("Niepoprawny %% zapelnienia (p): %i\n", p);
-                    help(argv[0]);
-                    exit(EXIT_FAILURE);
-                }
                 break;
             }
             case 'd': {
-                if ( d < 0 || d > 3) {
-                    printf("Niepoprawny kierunek mruwki: %i\n", d);
-                    help(argv[0]);
-                    exit(EXIT_FAILURE);
-                }
+                p = atoi(optarg);
                 break;
             }
             case 's': {
+                file_saved = 1;
                 save_filename = malloc(strlen(optarg));
                 memcpy(save_filename, optarg, strlen(optarg));
                 save_filename[strlen(optarg)] = '\0';
-                printf("zapisac w = %s\n", optarg);
+                printf("Zapisac w = %s\n", optarg);
                 break;
             }
             case 'o': {
                 // jesli o, to tylko z i, ewentualnie z s!
+                file_opened = 1;
                 open_filename = malloc(strlen(optarg));
                 memcpy(open_filename, optarg, strlen(optarg));
                 open_filename[strlen(optarg)] = '\0';
-                printf("otworzyc z = %s\n", optarg);
+                printf("Otworzyc z = %s\n", optarg);
                 break;
             }
             case '?': {
@@ -128,37 +99,79 @@ int main( int argc, char** argv ) {
             }
         }
     }
-    
-    
 
+    // wywołanie komendy pomocy
+    if (argc == 1) {
+        help(argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    
+    // wykrywanie błędów (dla numeru iteracji)
+    if ( it_count < 1 || it_count > 2000) {
+        printf("Niepoprawna liczba iteracji (i): %i\n", it_count);
+        help(argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    
     field_t field;
     ant_t ant;
 
-    if (0) {
+    // żaden plik nie został otwarty
+    if (file_opened == 0) {
+        // wykrywanie błędów (dla nie-otwierania pliku)
+        if ( m < 5 || m > 1000) {
+            printf("Niepoprawna liczba kolumn (m): %i\n", m);
+            help(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+        if ( n < 5 || n > 1000) {
+            printf("Niepoprawna liczba wierszy (n): %i\n", n);
+            help(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+        if ( p < 0 || p > 100) {
+            printf("Niepoprawny %% zapelnienia (p): %i\n", p);
+            help(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+        if ( d < 0 || d > 3) {
+            printf("Niepoprawny kierunek mruwki: %i\n", d);
+            help(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+
         init_field(&field, m, n);
         random_obstacles(&field, p);
         // pozycja mruwy na środku planszy
         int ant_x = m / 2;
         int ant_y = n / 2;
         init_ant(&ant, ant_x, ant_y, d);
-    } else get_from_file(&field, &ant, open_filename);
+    } else
+        get_from_file(&field, &ant, open_filename);
 
     for ( int i = 0; i < it_count; ++i ) {
         // filename_nriteracji
         char n_fname[1000];
-        sprintf(n_fname, "%s_%d", save_filename, i+1);
 
-        FILE *out = fopen(n_fname, "w");
+        if ( file_saved == 1)
+            sprintf(n_fname, "%s_%d", save_filename, i+1);
+
+        FILE *out = file_saved == 1 ? fopen(n_fname, "w") : stdout;
 
         for (int i = 0; i < field.m; ++i) {
             for ( int j = 0; j < field.n; ++j)
                 fprintf(out, "%s", pleasant_character(&field, &ant, i, j));
             fprintf(out, "\n");
         }
+        fprintf(out, "\n");
 
         move_ant(&ant, &field);
 
-        fclose(out);
+        // nie zamykam buffra jeśli jest on na konsolę
+        if (file_saved == 1)
+            fclose(out);
+        else
+            free(out);
     }
 
     return EXIT_SUCCESS;

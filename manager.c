@@ -18,11 +18,11 @@ char* pleasant_character(field_t* field, ant_t* ant, int x, int y) {
     if ( ant->direction == 0)                                   // ^
         return is_black == 0 ? BLACK_UP : WHITE_UP;
     if ( ant->direction == 1)                                   // >
-        return is_black == 0 ? BLACK_LEFT : WHITE_LEFT;
+        return is_black == 0 ? BLACK_RIGHT : WHITE_RIGHT;
     if ( ant->direction == 2)                                   // v
         return is_black == 0 ? BLACK_DOWN : WHITE_DOWN;
     if ( ant->direction == 3)                                   // <
-        return is_black == 0 ? BLACK_RIGHT : WHITE_RIGHT;
+        return is_black == 0 ? BLACK_LEFT : WHITE_LEFT;
     
     return " ";
 }
@@ -159,8 +159,10 @@ void field_editor(field_t* field, char* string, int row) {
 void get_from_file(field_t* dest_field, ant_t* dest_ant, char* filename) {
     FILE *opener = fopen(filename, "r");
 
-    if ( opener == NULL )
-        printf(":()");
+    if ( opener == NULL ) {
+        fprintf(stderr, "Podano nieprawilowy plik wejsciowy. Ups!\n" );
+        exit(EXIT_FAILURE);
+    }
 
     int new_m = 0, new_n = 0;
     //int ant_x = 0, ant_y = 0;
@@ -168,7 +170,7 @@ void get_from_file(field_t* dest_field, ant_t* dest_ant, char* filename) {
 
     char* input_buf;
     while ((input_buf = read_input(opener)) != NULL) {
-        printf("%04u: %s\n", ant_strlen(input_buf), input_buf);
+        // printf("%04u: %s\n", ant_strlen(input_buf), input_buf);
         ++new_m;
         if(new_n == 0) new_n = ant_strlen(input_buf);
         if((utemp = anttaker(input_buf).b) != -1) {
@@ -179,10 +181,6 @@ void get_from_file(field_t* dest_field, ant_t* dest_ant, char* filename) {
 
     dest_field->m = new_m;
     dest_field->n = new_n;
-
-    /*while( fgets(buffer, 3000, opener) != NULL ) {
-        printf("%zu: %s\n", strlen(buffer), buffer);
-    }*/
 
     fclose(opener);
 }

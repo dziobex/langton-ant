@@ -11,14 +11,7 @@ void init_ant(ant_t* ant, int x, int y, char dir) {
 }
 
 void move_ant(ant_t* ant, field_t* field) {
-    if (field->field[ant->x][ant->y] == 0) {        // biały
-        // w prawo
-        ant->direction++;
-    } else {                                        // czany
-        // w lewo
-        ant->direction--;
-    }
-    ant->direction = (ant->direction + 4) % 4;
+    
 
     // zmień kolor na przeciwny
     field->field[ant->x][ant->y] = field->field[ant->x][ant->y] == 0 ? 1 : 0;
@@ -29,16 +22,16 @@ void move_ant(ant_t* ant, field_t* field) {
     // przesuń mruwe do przodu
     switch (ant->direction) {
         case 0:     // czyli ^
-            ant->y--;
+            ant->x--;
             break;
         case 1:     // czyli >
-            ant->x++;
-            break;
-        case 2:     // czyli v
             ant->y++;
             break;
+        case 2:     // czyli v
+            ant->x++;
+            break;
         case 3:     // czyli <
-            ant->x--;
+            ant->y--;
             break;
         default:
             break;
@@ -49,4 +42,13 @@ void move_ant(ant_t* ant, field_t* field) {
         ant->x = p_x;
     if ( ant->y < 0 || ant->y >= field->m )
         ant->y = p_y;
+    
+    if (field->field[ant->x][ant->y] == 0) {        // biały
+        // w prawo
+        ant->direction++;
+    } else {                                        // czarny
+        // w lewo
+        ant->direction--;
+    }
+    ant->direction = (ant->direction + 4) % 4;
 }
