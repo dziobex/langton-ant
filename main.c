@@ -143,9 +143,6 @@ int main( int argc, char** argv ) {
         init_ant(&ant, ant_x, ant_y, d);
     } else get_from_file(&field, &ant, open_filename);
 
-    printf("][ %d %d ][", field.m, field.n);
-    printf("%d %d", ant.x, ant.y);
-
     for ( int i = 0; i < it_count; ++i ) {
         // filename_nriteracji
         char n_fname[1000];
