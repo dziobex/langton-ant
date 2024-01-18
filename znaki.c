@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <wchar.h>
 #include <locale.h>
 // LINE_VERTICAL:│
@@ -18,6 +19,21 @@
 // ARROW_SOUTH_BLACK:▼
 // ARROW_WEST_WHITE:◁
 // ARROW_WEST_BLACK:◀
+void printbuffer (const char* pt, size_t max)
+{
+  int length;
+  wchar_t dest;
+
+  mbtowc (NULL, NULL, 0);  /* reset mbtowc */
+
+  while (max>0) {
+    length = mbtowc(&dest,pt,max);
+    if (length<1) break;
+    printf ("[%lc]",dest);
+    pt+=length; max-=length;
+  }
+}
+
 int main() {
     
     printf("█ \n");
@@ -28,7 +44,6 @@ int main() {
     //setlocale(LC_ALL, "");
     setlocale(LC_ALL, "C.UTF-8");
 
-    wchar_t *wc = L"█";
-    wprintf(L"%ls %d \n", wc, wcslen(wc));
-    return 0;
+    char* string = "█";
+    printbuffer(string, sizeof string);
 }

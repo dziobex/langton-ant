@@ -16,7 +16,7 @@ void print_field(field_t* field, ant_t* ant);
 char* read_input(FILE* input_file);
 unsigned int ant_strlen(char* string);
 pair_int anttaker(char* string);
-ant_t* antmaker(pair_int positions, char* string, int row);
+void antmaker(ant_t *ant, pair_int positions, char* string, int row);
 
 void field_editor(field_t* field, char* string, int row);
 

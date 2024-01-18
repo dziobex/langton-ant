@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
 
 #include "field.h"
 #include "ant.h"
@@ -93,13 +92,14 @@ pair_int anttaker(char* string) {
         iter_len.a = -1;
         iter_len.b = -1;
     int iter = 0, len = 0; 
-    char running_buffer[3];
+    char running_buffer[4];
+    running_buffer[3] = '\0';
     while (string[iter] != '\0') {
         memcpy(running_buffer, string+iter, 3);
         if( (running_buffer[0]) == ' ') {
             ++iter;
         } else {
-            if(running_buffer != WHITE) {
+            if(strcmp(running_buffer, BLACK) != 0) {
                 iter_len.a = iter;
                 iter_len.b = len;
                 return iter_len;
@@ -111,41 +111,41 @@ pair_int anttaker(char* string) {
     return iter_len;
 }
 
-ant_t* antmaker(pair_int position, char* string, int row) {
-    /* Tworzy nową mrówkę.
+void antmaker(ant_t* ant, pair_int position, char* string, int row) {
+    /* Edytuje dane mrówki.
      * Bazuje to na pozycji mrówki, stringu, oraz rzędzie w którym się znajduje.
      * //NIE DZIAŁA - ZAMIEŃ NA WIDE CHAR ALBO COŚ CO POZWOLI NA PORÓWNANIA
      */
 
-    ant_t* ant_construct = (ant_t*)malloc(sizeof(ant_t));
-    char ant_buffer[3];
+    char ant_buffer[4];
+    ant_buffer[3] = '\0';
     memcpy(ant_buffer, string+position.a, 3);
-    if(ant_buffer == WHITE_UP || ant_buffer == BLACK_UP) {
-        ant_construct->direction = 0;
-    } else if(ant_buffer == WHITE_RIGHT || ant_buffer == BLACK_RIGHT) {
-        ant_construct->direction = 1;
-    } else if(ant_buffer == WHITE_DOWN || ant_buffer == BLACK_DOWN) {
-        ant_construct->direction = 2;
+    if(strcmp(ant_buffer, WHITE_UP) == 0 || strcmp(ant_buffer, BLACK_UP) == 0 ) {
+        ant->direction = 0;
+    } else if(strcmp(ant_buffer, WHITE_RIGHT) == 0 || strcmp(ant_buffer, BLACK_RIGHT) == 0 ) {
+        ant->direction = 1;
+    } else if(strcmp(ant_buffer, WHITE_DOWN) == 0 || strcmp(ant_buffer, BLACK_DOWN) == 0 ) {
+        ant->direction = 2;
     } else {
-        ant_construct->direction = 3;
+        ant->direction = 3;
     }
-    ant_construct->x = row;
-    ant_construct->y = position.b; 
-    return ant_construct;
+    ant->x = row;
+    ant->y = position.b; 
 }
 
 void field_editor(field_t* field, char* string, int row) {
     //Zmienia stan rzędu pola na podstawie stringa wejściowego.
     unsigned int iter = 0, len = 0;
-    char running_buffer[3];
+    char running_buffer[4];
+    running_buffer[3] = '\0';
     while (string[iter] != '\0') {
         memcpy(running_buffer, string+iter, 3);
         if( (running_buffer[0]) == ' ') {
             field->field[row][len] = 1;
             ++iter;
         } else {
-            if(running_buffer != WHITE) {
-                if(running_buffer == WHITE_UP || running_buffer == WHITE_DOWN || running_buffer == WHITE_LEFT || running_buffer == WHITE_RIGHT) {
+            if(strcmp(running_buffer, BLACK) != 0) {
+                if(strcmp(running_buffer, BLACK_UP) == 0 || strcmp(running_buffer, BLACK_DOWN) == 0 || strcmp(running_buffer, BLACK_LEFT) == 0 || strcmp(running_buffer, BLACK_RIGHT) == 0) {
                     field->field[row][len] = 0;
                 } else field->field[row][len] = 1;
             } else field->field[row][len] = 0;
@@ -171,9 +171,8 @@ void get_from_file(field_t* dest_field, ant_t* dest_ant, char* filename) {
         printf("%04u: %s\n", ant_strlen(input_buf), input_buf);
         ++new_m;
         if(new_n == 0) new_n = ant_strlen(input_buf);
-        if((utemp = anttaker(input_buf).a) != -1) {
-            dest_ant = antmaker(anttaker(input_buf), input_buf, new_m - 1);
-            printf(" ! %d !", utemp);
+        if((utemp = anttaker(input_buf).b) != -1) {
+            antmaker(dest_ant, anttaker(input_buf), input_buf, new_m - 1);
         } 
         field_editor(dest_field, input_buf, new_m - 1);
     }
