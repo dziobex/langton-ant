@@ -108,38 +108,40 @@ int main( int argc, char** argv ) {
         }
     }
     
-    // wykrywanie błędów
-    if ( m < 5 || m > 1000) {
-        printf("Niepoprawna liczba kolumn (m): %i\n", m);
-        help(argv[0]);
-        exit(EXIT_FAILURE);
-    }
-    if ( n < 5 || n > 1000) {
-        printf("Niepoprawna liczba wierszy (n): %i\n", n);
-        help(argv[0]);
-        exit(EXIT_FAILURE);
-    }
+    // wykrywanie błędów (dla numeru iteracji)
     if ( it_count < 1 || it_count > 2000) {
         printf("Niepoprawna liczba iteracji (i): %i\n", it_count);
         help(argv[0]);
         exit(EXIT_FAILURE);
     }
-    if ( p < 0 || p > 100) {
-        printf("Niepoprawny %% zapelnienia (p): %i\n", p);
-        help(argv[0]);
-        exit(EXIT_FAILURE);
-    }
-    if ( d < 0 || d > 3) {
-        printf("Niepoprawny kierunek mruwki: %i\n", d);
-        help(argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
+    
     field_t field;
     ant_t ant;
 
     // żaden plik nie został otwarty
     if (file_opened == 0) {
+        // wykrywanie błędów (dla nie-otwierania pliku)
+        if ( m < 5 || m > 1000) {
+            printf("Niepoprawna liczba kolumn (m): %i\n", m);
+            help(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+        if ( n < 5 || n > 1000) {
+            printf("Niepoprawna liczba wierszy (n): %i\n", n);
+            help(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+        if ( p < 0 || p > 100) {
+            printf("Niepoprawny %% zapelnienia (p): %i\n", p);
+            help(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+        if ( d < 0 || d > 3) {
+            printf("Niepoprawny kierunek mruwki: %i\n", d);
+            help(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+
         init_field(&field, m, n);
         random_obstacles(&field, p);
         // pozycja mruwy na środku planszy
