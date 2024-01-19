@@ -179,7 +179,7 @@ void get_from_file(field_t* dest_field, ant_t* dest_ant, char* filename) {
         field_editor(dest_field, input_buf, new_m - 1);
     }
 
-    dest_field->m = new_m;
+    dest_field->m = new_m - 1;
     dest_field->n = new_n;
 
     fclose(opener);

@@ -6,11 +6,11 @@
 
 typedef struct {
     int x, y; // pozycja mruwy
-    char direction; // kierunek mruwy
+    int direction; // kierunek mruwy
 } ant_t;
 
 // tworzy mruwke, stawia ją na planszy
-void init_ant(ant_t* ant, int x, int y, char dir);
+void init_ant(ant_t* ant, int x, int y, int dir);
 // przemiesza mrówkę, zgodnie z algorytmem
 void move_ant(ant_t* ant, field_t* field);
 

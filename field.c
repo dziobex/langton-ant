@@ -17,7 +17,8 @@ void init_field(field_t* field, int m, int n) {
 
 // generuje losowo czarne pola (przeszkody)
 void random_obstacles(field_t* field, int pc) {
-    int blackies = ((field->m * field->n) / 100) * pc;
+    int blackies = ((float)(field->m * field->n) / 100) * pc;
+    
     
     while ( --blackies >= 0 ) {
         int x = rand() % field->m;

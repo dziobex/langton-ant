@@ -3,7 +3,7 @@
 
 #include "ant.h"
 
-void init_ant(ant_t* ant, int x, int y, char dir) {
+void init_ant(ant_t* ant, int x, int y, int dir) {
     ant->x = x;
     ant->y = y;
 

@@ -68,7 +68,7 @@ int main( int argc, char** argv ) {
                 break;
             }
             case 'd': {
-                p = atoi(optarg);
+                d = atoi(optarg);
                 break;
             }
             case 's': {
@@ -149,29 +149,39 @@ int main( int argc, char** argv ) {
     } else
         get_from_file(&field, &ant, open_filename);
 
-    for ( int i = 0; i < it_count; ++i ) {
-        // filename_nriteracji
-        char n_fname[1000];
+    if ( file_saved == 1 ) {
+        for ( int i = 0; i < it_count; ++i ) {
+            // filename_nriteracji
+            char n_fname[1000];
 
-        if ( file_saved == 1)
-            sprintf(n_fname, "%s_%d", save_filename, i+1);
+            if ( file_saved == 1)
+                sprintf(n_fname, "%s_%d", save_filename, i+1);
 
-        FILE *out = file_saved == 1 ? fopen(n_fname, "w") : stdout;
+            FILE *out = file_saved == 1 ? fopen(n_fname, "w") : stdout;
 
-        for (int i = 0; i < field.m; ++i) {
-            for ( int j = 0; j < field.n; ++j)
-                fprintf(out, "%s", pleasant_character(&field, &ant, i, j));
+            for (int i = 0; i < field.m; ++i) {
+                for ( int j = 0; j < field.n; ++j)
+                    fprintf(out, "%s", pleasant_character(&field, &ant, i, j));
+                fprintf(out, "\n");
+            }
             fprintf(out, "\n");
-        }
-        fprintf(out, "\n");
 
-        move_ant(&ant, &field);
+            move_ant(&ant, &field);
 
-        // nie zamykam buffra jeśli jest on na konsolę
-        if (file_saved == 1)
             fclose(out);
-        else
-            free(out);
+        }
+    } else {
+        FILE *out = stdout;
+        for ( int i = 0; i < it_count; ++i ) {
+            for (int i = 0; i < field.m; ++i) {
+                for ( int j = 0; j < field.n; ++j)
+                    fprintf(out, "%s", pleasant_character(&field, &ant, i, j));
+                fprintf(out, "\n");
+            }
+            fprintf(out, "\n");
+
+            move_ant(&ant, &field);
+        }
     }
 
     return EXIT_SUCCESS;
